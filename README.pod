@@ -1,0 +1,77 @@
+=pod
+
+=head1 NAME
+
+HTML::FormHandlerX::Field::DateTimeNatural - a datetime field with natural
+language parsing.
+
+=head1 VERSION
+
+0.1.0
+
+=head1 SYNOPSIS
+
+This field is a simple text input field type, but it understands natural
+language and dates. Most of the functionality is inherited from
+L<DateTime::Format::Natural>. To see a list of dates it can understand see
+L<DateTime::Format::Natural::Lang::EN>.
+
+  has_field 'date' => (
+    type      => 'DateTimeNatural',
+    time_zone => 'UTC', # optional
+  );
+
+=head1 METHODS
+
+This field supports all of the methods inherited from
+L<HTML::FormHandler::Field::Text>, as well as all of the parameters offered by
+L<DateTime::Format::Natural>, all of which are optional.
+
+Here is the list of the methods, please refer to original module for
+their description:
+
+=over 4
+
+=item time_zone
+
+=item datetime
+
+=item lang
+
+=item format
+
+=item prefer_future
+
+=item daytime
+
+=back
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<HTML::FormHandler>
+
+=item L<HTML::FormHandler::Field::Text>
+
+=item L<DateTime::Format::Natural>
+
+=item L<DateTime::Format::Natural::Lang::EN>
+
+=back
+
+=head1 AUTHOR
+
+ Roman F.
+ romanf@cpan.org
+
+=head1 COPYRIGHT
+
+Copyright (c) 2011 Roman F.
+
+This program is free software; you can redistribute
+it and/or modify it under the same terms as Perl itself.
+
+The full text of the license can be found in the
+LICENSE file included with this module.
+
