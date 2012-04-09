@@ -1,12 +1,14 @@
 package HTML::FormHandlerX::Field::DateTimeNatural;
 
+# ABSTRACT: a datetime field with natural language parsing.
+
 use Moose;
 use MooseX::Types::DateTime;
 extends 'HTML::FormHandler::Field::Text';
 
 use DateTime::Format::Natural;
 
-use version; our $VERSION = version->declare("v0.1.0");
+use version; our $VERSION = version->declare("v0.3");
 
 has 'datetime_format_natural' => (
     is         => 'ro',
@@ -68,9 +70,6 @@ sub get_class_messages {
 sub validate {
     my $self = shift;
     my $value = $self->value;
-    
-    ## if no value then return right away or DT::F::N might fail
-    return 0 unless $value;
 
     ## validate
     my $parser = $self->datetime_format_natural;
@@ -97,7 +96,7 @@ sub _build_datetime_format_natural {
             $attributes{$attr} = $self->$attr;
         }
     }
-    
+
     ## Fix time_zone if set, because DT::F::N can only accept time zone
     ## names and not objects, at the time of writing this module.
     if ($self->has_time_zone) {
@@ -113,15 +112,6 @@ use namespace::autoclean;
 
 __END__
 =pod
-
-=head1 NAME
-
-HTML::FormHandlerX::Field::DateTimeNatural - a datetime field with natural
-language parsing.
-
-=head1 VERSION
-
-0.1.0
 
 =head1 SYNOPSIS
 
@@ -173,19 +163,3 @@ their description:
 =item L<DateTime::Format::Natural::Lang::EN>
 
 =back
-
-=head1 AUTHOR
-
- Roman F.
- romanf@cpan.org
-
-=head1 COPYRIGHT
-
-Copyright (c) 2011 Roman F.
-
-This program is free software; you can redistribute
-it and/or modify it under the same terms as Perl itself.
-
-The full text of the license can be found in the
-LICENSE file included with this module.
-
