@@ -28,7 +28,7 @@ is $dtn->value->time_zone->name, 'UTC', 'Time Zone was set';
 
 ## time zone attribute tests
 $dtn = HTML::FormHandlerX::Field::DateTimeNatural->new(name => 'dtn');
-isa_ok $dtn->time_zone, 'DateTime::TimeZone::Floating';
+ok ! defined $dtn->time_zone, 'time_zone not defined';
 
 $dtn = HTML::FormHandlerX::Field::DateTimeNatural->new(name => 'dtn', time_zone => 'UTC');
 isa_ok $dtn->time_zone, 'DateTime::TimeZone::UTC';
@@ -39,15 +39,11 @@ isa_ok $dtn->time_zone, 'DateTime::TimeZone::UTC';
 ## time zone form inheritance tests
 use_ok 'DateTimeNaturalTestForm';
 
-my $dtntf = DateTimeNaturalTestForm->new();
-isa_ok $dtntf, 'DateTimeNaturalTestForm';
-ok ! $dtntf->time_zone, 'Form time zone not defined';
-isa_ok $dtntf->field('datetimenatural')->time_zone, 'DateTime::TimeZone::Floating';
-
 $dtntf = DateTimeNaturalTestForm->new(time_zone => 'UTC');
 isa_ok $dtntf, 'DateTimeNaturalTestForm';
+ok $dtntf->process({ datetimenatural => 'today' }), 'process';
 isa_ok $dtntf->time_zone, 'DateTime::TimeZone::UTC';
-isa_ok $dtntf->field('datetimenatural')->time_zone, 'DateTime::TimeZone::UTC';
+isa_ok $dtntf->field('datetimenatural')->value->time_zone, 'DateTime::TimeZone::UTC';
 
 done_testing;
 # eof

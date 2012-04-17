@@ -8,7 +8,7 @@ extends 'HTML::FormHandler::Field::Text';
 
 use DateTime::Format::Natural;
 
-use version; our $VERSION = version->declare("v0.4");
+use version; our $VERSION = version->declare("v0.5");
 
 has 'datetime_format_natural' => (
     is         => 'ro',
@@ -20,38 +20,32 @@ has 'datetime_format_natural' => (
 has 'datetime' => (
     is         => 'rw',
     isa        => 'DateTime',
-    lazy_build => 1,
 );
 
 has 'lang' => (
     is         => 'rw',
     isa        => 'Str',
-    lazy_build => 1,
 );
 
 has 'format' => (
     is         => 'rw',
     isa        => 'Str',
-    lazy_build => 1,
 );
 
 has 'prefer_future' => (
     is         => 'rw',
     isa        => 'Bool',
-    lazy_build => 1,
 );
 
 has 'time_zone' => (
     is         => 'rw',
     isa        => 'DateTime::TimeZone',
-    lazy_build => 1,
     coerce     => 1,
 );
 
 has 'daytime' => (
     is         => 'rw',
     isa        => 'HashRef',
-    lazy_build => 1,
 );
 
 
@@ -90,33 +84,22 @@ sub _build_datetime_format_natural {
     my $self = shift;
 
     my %attributes;
-    foreach my $attr (qw/datetime lang format prefer_future daytime/) {
-        my $predicate = "has_$attr";
-        if ($self->$predicate) {
+    my $form = $self->form;
+    foreach my $attr (qw/datetime time_zone lang format prefer_future daytime/) {
+        if (defined $self->$attr) {
             $attributes{$attr} = $self->$attr;
+        } elsif ($form && $form->meta->find_attribute_by_name($attr) && defined $form->$attr) {
+            $attributes{$attr} = $form->$attr;
         }
     }
 
     ## Fix time_zone if set, because DT::F::N can only accept time zone
     ## names and not objects, at the time of writing this module.
-    if ($self->has_time_zone) {
-        $attributes{time_zone} = $self->time_zone->name;
+    if ($attributes{time_zone}) {
+        $attributes{time_zone} = $attributes{time_zone}->name;
     }
 
     return DateTime::Format::Natural->new(%attributes);
-}
-
-sub _build_time_zone {
-    my $self = shift;
-
-    if ($self->form
-        && $self->form->meta->find_attribute_by_name('time_zone')
-        && defined $self->form->time_zone) {
-
-        return $self->form->time_zone;
-    }
-
-    return DateTime::TimeZone::Floating->new;
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -144,6 +127,11 @@ This field supports all of the methods inherited from
 L<HTML::FormHandler::Field::Text>, as well as all of the parameters offered by
 L<DateTime::Format::Natural>, all of which are optional.
 
+In addition to that, it will try to obtain the values for these attributes
+from the parent form class. E.g. you can set the C<time_zone> attribute on the
+form class, and all of the C<DateTimeNatural> fields will automatically have
+the time zone set.
+
 Here is the list of the methods, please refer to original module for
 their description:
 
@@ -162,9 +150,6 @@ their description:
 =item * daytime
 
 =back
-
-In addition to that, it will try to obtain time zone information from a
-C<time_zone> attribute on a parent form class, if it exists.
 
 =head1 SEE ALSO
 
