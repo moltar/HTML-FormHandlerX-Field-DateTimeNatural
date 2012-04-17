@@ -8,7 +8,7 @@ extends 'HTML::FormHandler::Field::Text';
 
 use DateTime::Format::Natural;
 
-use version; our $VERSION = version->declare("v0.3");
+use version; our $VERSION = version->declare("v0.4");
 
 has 'datetime_format_natural' => (
     is         => 'ro',
@@ -106,6 +106,19 @@ sub _build_datetime_format_natural {
     return DateTime::Format::Natural->new(%attributes);
 }
 
+sub _build_time_zone {
+    my $self = shift;
+
+    if ($self->form
+        && $self->form->meta->find_attribute_by_name('time_zone')
+        && defined $self->form->time_zone) {
+
+        return $self->form->time_zone;
+    }
+
+    return DateTime::TimeZone::Floating->new;
+}
+
 __PACKAGE__->meta->make_immutable;
 use namespace::autoclean;
 1;
@@ -136,30 +149,33 @@ their description:
 
 =over 4
 
-=item time_zone
+=item * time_zone
 
-=item datetime
+=item * datetime
 
-=item lang
+=item * lang
 
-=item format
+=item * format
 
-=item prefer_future
+=item * prefer_future
 
-=item daytime
+=item * daytime
 
 =back
+
+In addition to that, it will try to obtain time zone information from a
+C<time_zone> attribute on a parent form class, if it exists.
 
 =head1 SEE ALSO
 
 =over 4
 
-=item L<HTML::FormHandler>
+=item * L<HTML::FormHandler>
 
-=item L<HTML::FormHandler::Field::Text>
+=item * L<HTML::FormHandler::Field::Text>
 
-=item L<DateTime::Format::Natural>
+=item * L<DateTime::Format::Natural>
 
-=item L<DateTime::Format::Natural::Lang::EN>
+=item * L<DateTime::Format::Natural::Lang::EN>
 
 =back
