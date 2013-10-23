@@ -2,13 +2,13 @@ package HTML::FormHandlerX::Field::DateTimeNatural;
 
 # ABSTRACT: a datetime field with natural language parsing.
 
-use Moose;
-use MooseX::Types::DateTime;
+use version; our $VERSION = version->declare('v0.6');
+
+use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Text';
 
+use MooseX::Types::DateTime;
 use DateTime::Format::Natural;
-
-use version; our $VERSION = version->declare("v0.5");
 
 has 'datetime_format_natural' => (
     is         => 'ro',
