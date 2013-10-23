@@ -18,56 +18,50 @@ has 'datetime_format_natural' => (
 );
 
 has 'datetime' => (
-    is         => 'rw',
-    isa        => 'DateTime',
+    is  => 'rw',
+    isa => 'DateTime',
 );
 
 has 'lang' => (
-    is         => 'rw',
-    isa        => 'Str',
+    is  => 'rw',
+    isa => 'Str',
 );
 
 has 'format' => (
-    is         => 'rw',
-    isa        => 'Str',
+    is  => 'rw',
+    isa => 'Str',
 );
 
 has 'prefer_future' => (
-    is         => 'rw',
-    isa        => 'Bool',
+    is  => 'rw',
+    isa => 'Bool',
 );
 
 has 'time_zone' => (
-    is         => 'rw',
-    isa        => 'DateTime::TimeZone',
-    coerce     => 1,
+    is     => 'rw',
+    isa    => 'DateTime::TimeZone',
+    coerce => 1,
 );
 
 has 'daytime' => (
-    is         => 'rw',
-    isa        => 'HashRef',
+    is  => 'rw',
+    isa => 'HashRef',
 );
 
-
-our $class_messages = {
-    'date_invalid' => 'Date is invalid.',
-};
+our $class_messages = { 'date_invalid' => 'Date is invalid.', };
 
 sub get_class_messages {
     my $self = shift;
-    return {
-        %{$self->next::method},
-        %{$class_messages},
-    };
+    return { %{ $self->next::method }, %{$class_messages}, };
 }
 
 sub validate {
-    my $self = shift;
+    my $self  = shift;
     my $value = $self->value;
 
     ## validate
     my $parser = $self->datetime_format_natural;
-    my $dt = $parser->parse_datetime($value);
+    my $dt     = $parser->parse_datetime($value);
 
     ## update to inflated value or set error
     if ($parser->success) {
@@ -85,10 +79,15 @@ sub _build_datetime_format_natural {
 
     my %attributes;
     my $form = $self->form;
-    foreach my $attr (qw/datetime time_zone lang format prefer_future daytime/) {
+    foreach
+        my $attr (qw/datetime time_zone lang format prefer_future daytime/)
+    {
         if (defined $self->$attr) {
             $attributes{$attr} = $self->$attr;
-        } elsif ($form && $form->meta->find_attribute_by_name($attr) && defined $form->$attr) {
+        } elsif ($form
+            && $form->meta->find_attribute_by_name($attr)
+            && defined $form->$attr)
+        {
             $attributes{$attr} = $form->$attr;
         }
     }
